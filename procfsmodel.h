@@ -32,7 +32,8 @@ public:
     ProcFs* getFs () { return m_proc_fs; }
 
     void update (Direntry *entry);
-
+signals:
+    void changeToIndex (int row_adjusted, bool added);
 public slots:
 
 private:

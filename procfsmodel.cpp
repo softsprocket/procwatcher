@@ -165,6 +165,7 @@ bool ProcFsModel::addOrRemoveEntry (Direntry* entry) {
             beginInsertRows (rootIndex (), i, i);
 
             data_store->push_back (copy);
+            changeToIndex (i, true);
 
             endInsertRows ();
 
@@ -179,6 +180,7 @@ bool ProcFsModel::addOrRemoveEntry (Direntry* entry) {
 
                     delete (*data_store_iter);
                     data_store_iter = data_store->erase (data_store_iter);
+                    changeToIndex (i, false);
 
                     endRemoveRows ();
 
@@ -190,6 +192,7 @@ bool ProcFsModel::addOrRemoveEntry (Direntry* entry) {
                     beginInsertRows (rootIndex (), i, i);
 
                     data_store_iter = data_store->insert (copy, data_store_iter);
+                    changeToIndex (i, true);
 
                     endInsertRows ();
 

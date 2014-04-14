@@ -26,8 +26,7 @@ ProcWatcher::ProcWatcher (QWidget* parent) :
     lastVerticalScrollBarPos (0),
     lastHorizontalScrollBarPos (0),
     timer_interval (100),
-    timer_state (false),
-    m_activated_row (0) {
+    timer_state (false) {
 
     ui->setupUi (this);
 
@@ -53,6 +52,7 @@ ProcWatcher::ProcWatcher (QWidget* parent) :
     connect (ui->procTreeView, SIGNAL (activated (const QModelIndex&)), this, SLOT (whenActivated (const QModelIndex&)));
     connect (ui->procText, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (contextMenuEvent (const QPoint&)));
     connect (watcherThread, SIGNAL (modelChanged (Direntry*)), this, SLOT (updateModel (Direntry*)));
+    connect (procModel,SIGNAL (changeToIndex (int, bool)), this, SLOT (updateSelectedIndex (int, bool)));
 }
 
 void ProcWatcher::initTree () {
@@ -80,14 +80,27 @@ ProcWatcher::~ProcWatcher () {
 }
 
 void ProcWatcher::whenActivated (const QModelIndex& index) {
-    //std::cout << "activated " << index.row () << std::endl;
-    m_activated_row = index.row ();
+    m_activated_row = index;
 }
 
 void ProcWatcher::updateModel (Direntry* entry) {
     watcherThread->pause ();
     procModel->update (entry);
     watcherThread->resume ();
+}
+
+void ProcWatcher::updateSelectedIndex (int row_adjusted, bool added) {
+
+    if (m_activated_row.isValid () && row_adjusted < m_activated_row.row ()) {
+        int adjust = added ? 1 : -1;
+        m_activated_row = procModel->index (
+                              m_activated_row.row () + adjust,
+                              m_activated_row.column (),
+                              procModel->rootIndex ()
+                          );
+
+        ui->procTreeView->selectionModel ()->setCurrentIndex (m_activated_row, QItemSelectionModel::ClearAndSelect);
+    }
 }
 
 void ProcWatcher::on_procTreeView_doubleClicked (const QModelIndex& index) {

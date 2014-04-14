@@ -25,6 +25,8 @@ public:
 
     void initTree ();
 
+signals:
+
 private slots:
     void on_procTreeView_doubleClicked (const QModelIndex& index);
     void onTimer ();
@@ -39,6 +41,7 @@ private slots:
     void updateModel (Direntry*);
     void whenActivated (const QModelIndex& index);
     void contextMenuEvent (const QPoint& pos);
+    void updateSelectedIndex (int row_adjusted, bool added);
 private:
     Ui::ProcWatcher* ui;
 
@@ -51,7 +54,7 @@ private:
     int lastHorizontalScrollBarPos;
     int timer_interval;
     bool timer_state;
-    int m_activated_row;
+    QModelIndex m_activated_row;
 
     void writeInfo (QFileInfo& info, bool clear = true);
     void searchForProc (QString name);
