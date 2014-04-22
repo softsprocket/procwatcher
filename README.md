@@ -6,6 +6,7 @@ Very much in beta but you might find it of use.
 It requires libqt4-dev to be installed. If it is you can, in the procwatcher directory, type:
 
 qmake
+
 make
 
 and then run the application:
